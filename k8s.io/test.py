@@ -327,7 +327,20 @@ class RedirTest(unittest.TestCase):
 
 
 class ContentTest(unittest.TestCase):
-    def assert_body_configmap(self, url, filename):
+
+    def assert_body_configmap(self, url, pkg):
+        print('GET', url)
+        resp, body = do_get(url)
+        self.assertEqual(resp.status, 200)
+
+        expected_body = """<html><head>
+  <meta name="go-import" content="k8s.io/%s git https://github.com/kubernetes/%s">
+  <meta name="go-source" content="k8s.io/%s     https://github.com/kubernetes/%s https://github.com/kubernetes/%s/tree/master{/dir} https://github.com/kubernetes/%s/blob/master{/dir}/{file}#L{line}">
+</head></html>
+""" % (pkg, pkg, pkg, pkg, pkg, pkg)
+        self.assertMultiLineEqual(body, expected_body)
+
+    def assert_body_configmap_file(self, url, filename):
         print('GET', url)
         resp, body = do_get(url)
         self.assertEqual(resp.status, 200)
@@ -348,13 +361,13 @@ class ContentTest(unittest.TestCase):
         suff = '%d?go-get=1' % rand_num()
         for pkg in ('kubernetes', 'heapster', 'kube-ui'):
             self.assert_body_configmap('%s/%s/%s' % (base, pkg, suff),
-                'golang/%s.html' % pkg)
+                pkg)
         resp, body = do_get(base + '/foobar/123?go-get=1')
         self.assertEqual(resp.status, 404)
 
     def test_get(self):
         for base in ('http://get.k8s.io', 'http://get.kubernetes.io'):
-            self.assert_body_configmap(base, 'get/get-kube-insecure.sh')
+            self.assert_body_configmap_file(base, 'get/get-kube-insecure.sh')
 
         for base in ('https://get.k8s.io', 'https://get.kubernetes.io'):
           self.assert_body_url(

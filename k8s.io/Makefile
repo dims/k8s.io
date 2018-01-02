@@ -12,13 +12,12 @@ deploy:
 	kubectl get secret/ssl || kubectl apply -f secret-ssl.yaml
 	kubectl apply -f configmap-nginx.yaml
 	kubectl apply -f configmap-www-get.yaml
-	kubectl apply -f configmap-www-golang.yaml
 	kubectl apply -f service-dev.yaml
 	kubectl apply -f deployment.yaml
 
 .PHONY: test
 test:
-	python test.py -q
+	PYTHONHTTPSVERIFY=0 python2 test.py -q
 
 .PHONY: docker-test
 docker-test:
