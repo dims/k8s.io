@@ -28,4 +28,4 @@ VOLUME ["/data"]
 
 EXPOSE 6080
 
-ENTRYPOINT ["/go/bin/houndd", "-conf", "/data/config.json"]
+ENTRYPOINT ["/go/bin/houndd", "-conf", "/data/config.json", "-addr", ":6080"]
