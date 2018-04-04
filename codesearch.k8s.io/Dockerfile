@@ -26,6 +26,6 @@ RUN go install github.com/etsy/hound/cmds/houndd
 
 VOLUME ["/data"]
 
-EXPOSE 6080
+EXPOSE 8080
 
-ENTRYPOINT ["/go/bin/houndd", "-conf", "/data/config.json", "-addr", ":6080"]
+ENTRYPOINT ["/go/bin/houndd", "-conf", "/data/config.json", "-addr", ":8080"]
